@@ -72,16 +72,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                          height: 200,
-                          padding:
-                              const EdgeInsets.only(left: 30.0, right: 30.0),
-                          child: FlareActor(
-                            "assets/Teddy.flr",
-                            shouldClip: false,
-                            alignment: Alignment.bottomCenter,
-                            fit: BoxFit.contain,
-                            controller: _teddyController,
-                          )),
+                        height: 200,
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        child: FlareActor(
+                          "assets/Teddy.flr",
+                          shouldClip: false,
+                          alignment: Alignment.bottomCenter,
+                          fit: BoxFit.contain,
+                          controller: _teddyController,
+                        ),
+                      ),
                       Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
