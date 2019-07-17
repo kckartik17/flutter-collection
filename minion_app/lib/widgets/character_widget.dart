@@ -4,9 +4,13 @@ import 'package:minion_app/styleguide.dart';
 import 'package:minion_app/pages/character_detail_screen.dart';
 
 class CharacterWidget extends StatelessWidget {
-  final int index;
+  final Character character;
+  final PageController pageController;
+  final int currentPage;
 
-  const CharacterWidget({Key key, this.index}) : super(key: key);
+  const CharacterWidget(
+      {Key key, this.character, this.pageController, this.currentPage})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,61 +23,73 @@ class CharacterWidget extends StatelessWidget {
             PageRouteBuilder(
                 transitionDuration: const Duration(milliseconds: 1000),
                 pageBuilder: (context, _, __) =>
-                    CharacterDetailScreen(character: characters[index])));
+                    CharacterDetailScreen(character: character)));
       },
-      child: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: CharacterCardBackgroundClipper(),
-              child: Hero(
-                tag: "background-${characters[index].name}",
-                child: Container(
-                  height: 0.6 * screenHeight,
-                  width: 0.9 * screenWidth,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: characters[index].colors,
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft)),
+      child: AnimatedBuilder(
+        animation: pageController,
+        builder: (context, child) {
+          double value = 1;
+          if (pageController.position.haveDimensions) {
+            value = pageController.page - currentPage;
+            value = (1 - (value.abs() * 0.6)).clamp(0.0, 1.0);
+          }
+
+          return Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ClipPath(
+                  clipper: CharacterCardBackgroundClipper(),
+                  child: Hero(
+                    tag: "background-${character.name}",
+                    child: Container(
+                      height: 0.6 * screenHeight,
+                      width: 0.9 * screenWidth,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: character.colors,
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft)),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 10.0,
-            child: Hero(
-              tag: "image-${characters[index].name}",
-              child: Image.asset(
-                characters[index].imagePath,
-                height: screenHeight * 0.55,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 48, bottom: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Hero(
-                  tag: "name-${characters[index].name}",
-                  child: RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: "${characters[index].name}",
-                          style: AppTheme.heading),
-                      TextSpan(text: "\n"),
-                      TextSpan(
-                          text: "Tap to know more", style: AppTheme.subHeading)
-                    ]),
+              Positioned(
+                right: 10.0,
+                child: Hero(
+                  tag: "image-${character.name}",
+                  child: Image.asset(
+                    character.imagePath,
+                    height: screenHeight * 0.55 * value,
                   ),
-                )
-              ],
-            ),
-          )
-        ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 48, bottom: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Hero(
+                      tag: "name-${character.name}",
+                      child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "${character.name}",
+                              style: AppTheme.heading),
+                          TextSpan(text: "\n"),
+                          TextSpan(
+                              text: "Tap to know more",
+                              style: AppTheme.subHeading)
+                        ]),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          );
+        },
       ),
     );
   }

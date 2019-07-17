@@ -9,6 +9,16 @@ class CharacterListingScreen extends StatefulWidget {
 }
 
 class _CharacterListingScreenState extends State<CharacterListingScreen> {
+  PageController _pageController;
+  int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+        initialPage: currentPage, keepPage: false, viewportFraction: 1.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,16 +54,16 @@ class _CharacterListingScreenState extends State<CharacterListingScreen> {
                 ),
               ),
               Expanded(
-                  child: ListView.builder(
-                itemCount: characters.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 0.05 * (MediaQuery.of(context).size.width)),
-                    child: CharacterWidget(index: index),
-                  );
-                },
+                  child: PageView(
+                physics: ClampingScrollPhysics(),
+                controller: _pageController,
+                children: <Widget>[
+                  for (var i = 0; i < characters.length; i++)
+                    CharacterWidget(
+                        character: characters[i],
+                        pageController: _pageController,
+                        currentPage: i)
+                ],
               ))
             ],
           ),
